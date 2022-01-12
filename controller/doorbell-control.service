@@ -1,0 +1,13 @@
+[Unit]
+Description=Raspberry Pi Doorbell Controller Service
+After=network.target
+
+[Service]
+Restart=always
+WorkingDirectory=/opt/doorbell
+ExecStart=/usr/bin/python3 /opt/doorbell/controller.py
+StandardOutput=inherit
+StandardError=inherit
+
+[Install]
+WantedBy=multi-user.target
