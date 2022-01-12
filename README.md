@@ -14,6 +14,7 @@ TO-DO
 ---
 
 * Add EasyCap and ffmpeg instructions, based on: https://www.arrow.com/en/research-and-events/articles/pi-bandwidth-with-video
+* Use the https://github.com/aler9/rtsp-simple-server release for the installer
 * Add wiring schemas for the Tekna Plus
 * Add circuit design for GPIO
 
