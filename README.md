@@ -20,7 +20,7 @@ TO-DO
 * Create BOM:
   * Raspberry Pi 2 or superior
   * EasyCap
-  * 1K&Omega; and 220&Omega; Resistors, 1&#181;F capacitor and 1N4148 diode, similar to this circuit
+  * 1K&Omega; and 220&Omega; Resistors, 1&micro;F capacitor and 1N4148 diode, similar to this circuit
     [![CircuitLab Schematic 8683944b6u3b](https://www.circuitlab.com/circuit/8683944b6u3b/screenshot/540x405/)](https://www.circuitlab.com/circuit/8683944b6u3b/stackexchange-2019-11-10-14_48_56/)
   * Relay for open door signal
 
