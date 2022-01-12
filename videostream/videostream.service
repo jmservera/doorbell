@@ -1,0 +1,11 @@
+[Unit]
+Description=Raspberry Pi Doorbell Video Service
+After=network.target
+
+[Service]
+Restart=always
+WorkingDirectory=/opt/videostream
+ExecStart=/opt/videostream/rtsp-simple-server /opt/videostream/rtsp-simple-server.yml
+
+[Install]
+WantedBy=multi-user.target
