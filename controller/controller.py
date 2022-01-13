@@ -13,6 +13,8 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+mqttc = None
+
 formatter = logging.Formatter(fmt="%(asctime)s %(name)s.%(levelname)s: %(message)s", datefmt="%Y.%m.%d %H:%M:%S")
 handler = logging.StreamHandler(stream=sys.stdout)
 handler.setFormatter(formatter)
@@ -31,23 +33,31 @@ def printtime(): # Used for debug
     wholetime = hour + ":" + minute
 
 def sendmqtt(mess):
+    topic="doorbell/ding"
     try:
-        mqttc.connect(url.hostname, url.port)
-        mqttc.publish("doorbell/ding", mess)
+        logger.info("Message '"+mess+"' to "+topic)
+        mqttc.publish(topic, mess)
     except:
+        logger.error("mqtt error")
+        logger.error(sys.exc_info()[1])
         pass
 
 
-def mqttConnect(mqtt_server,mqtt_user,mqtt_pass):
+def mqttConnect(mqtt_user,mqtt_pass):
+    logger.info("MQTT trying connection to "+mqtt_server+":"+str(mqtt_port))
+
     mqttc = paho.Client()
-    url = urllib.parse.urlparse(mqtt_server)
     mqttc.username_pw_set(mqtt_user, mqtt_pass)
+
+    mqttc.connect(mqtt_server,mqtt_port)
 
     logger.info("MQTT configured")
 
     return mqttc
 
 def main(argv):
+
+    global mqttc, mqtt_server, mqtt_port
 
     config = configparser.ConfigParser()
     config.read('config.ini')
@@ -57,10 +67,11 @@ def main(argv):
     mqtt_user=config['DEFAULT']['mqtt_user']
     mqtt_pass=config['DEFAULT']['mqtt_pass']
     mqtt_server=config['DEFAULT']['mqtt_server']
+    mqtt_port=int(config['DEFAULT']['mqtt_port'])
 
 
     # Mqtt
-    mqttc=mqttConnect(mqtt_server,mqtt_user,mqtt_pass)
+    mqttc = mqttConnect(mqtt_user,mqtt_pass)
 
 
     # Setup Gpio
