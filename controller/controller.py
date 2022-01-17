@@ -59,6 +59,8 @@ def main(argv):
 
     global mqttc, mqtt_server, mqtt_port
 
+    count=0
+
     config = configparser.ConfigParser()
     config.read('config.ini')
 
@@ -76,8 +78,8 @@ def main(argv):
 
     # Setup Gpio
     GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(input_pin, GPIO.IN)         # Output from Doorbell
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(input_pin, GPIO.IN,  pull_up_down=GPIO.PUD_DOWN)         # Output from Doorbell
 
     logger.info("GPI configured in pin: "+str(input_pin))
 
@@ -87,8 +89,12 @@ def main(argv):
 
     while True:
         try:
-            channel=GPIO.wait_for_edge(13, GPIO.FALLING, timeout=5000)
+            channel=GPIO.wait_for_edge(input_pin, GPIO.FALLING, timeout=5000)
             if channel is None:
+                count=count+1
+                if count>25:
+                    count=0
+                    sendmqtt("alive")
                 logger.info('Loop')
             else:
                 logger.info('Fall detected')
