@@ -24,6 +24,22 @@ The complete circuit will look something like this:
 
 [![CircuitLab Schematic e6j49denkbd4](https://www.circuitlab.com/circuit/e6j49denkbd4/screenshot/540x405/)](https://www.circuitlab.com/circuit/e6j49denkbd4/video-doorbell-circuit/)
 
+BOM
+---
+
+ * A Raspberry Pi 2 or superior
+ * An [EasyCap](https://linuxtv.org/wiki/index.php/Easycap) dongle
+ * Two 1K&Omega; resistor
+ * One 20K&Omega; resistor
+ * Two 1N4148 diodes
+ * A 2N2222 Transistor
+ * A Relay
+ * Terminals
+ * Soldering Iron
+ * Perfboard or any solder board of your preference
+ * Several colors of 22 gauge wires
+
+
 TO-DO
 ---
 
@@ -31,11 +47,6 @@ TO-DO
 * Use the https://github.com/aler9/rtsp-simple-server release for the installer
 * Add wiring schemas for the Tekna Plus
 * Add circuit design for GPIO
-* Create BOM:
-  * Raspberry Pi 2 or superior
-  * EasyCap
-  * 1K&Omega; and 220&Omega; Resistors, 1&micro;F capacitor and 1N4148 diode, similar to this circuit
-    [![CircuitLab Schematic 8683944b6u3b](https://www.circuitlab.com/circuit/8683944b6u3b/screenshot/540x405/)](https://www.circuitlab.com/circuit/8683944b6u3b/stackexchange-2019-11-10-14_48_56/)
   * Relay code for open door signal
 
 
