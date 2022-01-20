@@ -2,6 +2,8 @@
 
 A raspi hack for the golmar video doorbell.
 
+> Warning! This is an amateur project to hack a specific brand/model of a video doorbell. Your model may be completely different and use other voltages and signals, take care of measuring everything before trying this at home. The author does not take any responsibility for any damage or harm that may happen.
+
 Work In Progress
 ---
 
