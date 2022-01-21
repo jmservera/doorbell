@@ -8,7 +8,7 @@ import RPi.GPIO as GPIO
 from signal import pause
 
 from logger import logger
-from transport import sendmqtt, mqttConnect
+from transport import sendmqtt, mqttConnect, stop_transport
 
 import configparser
 
