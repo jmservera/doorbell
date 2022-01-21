@@ -3,10 +3,11 @@
 
 import paho.mqtt.client as paho
 import time
-import urllib.parse
 import RPi.GPIO as GPIO
-import datetime
 import sys
+
+
+from signal import pause
 
 import logging
 
@@ -23,15 +24,6 @@ logger.addHandler(handler)
 import configparser
 
 
-def printtime(): # Used for debug
-    # Current time
-    global hour, minute, wholetime
-    now = datetime.datetime.now()
-    hour = str(now.hour)
-    minute = int(now.minute)
-    minute = '%02d' % minute
-    wholetime = hour + ":" + minute
-
 def sendmqtt(mess):
     topic="doorbell/ding"
     try:
@@ -43,7 +35,7 @@ def sendmqtt(mess):
         pass
 
 
-def mqttConnect(mqtt_user,mqtt_pass):
+def mqttConnect(mqtt_user,mqtt_pass,mqtt_server,mqtt_port):
     logger.info("MQTT trying connection to "+mqtt_server+":"+str(mqtt_port))
 
     mqttc = paho.Client()
@@ -55,11 +47,15 @@ def mqttConnect(mqtt_user,mqtt_pass):
 
     return mqttc
 
+def ring_callback(channel):
+    logger.info('Fall detected')
+    sendmqtt("on")
+    time.sleep(5)
+    sendmqtt("off")
+
 def main(argv):
 
     global mqttc, mqtt_server, mqtt_port
-
-    count=0
 
     config = configparser.ConfigParser()
     config.read('config.ini')
@@ -73,13 +69,14 @@ def main(argv):
 
 
     # Mqtt
-    mqttc = mqttConnect(mqtt_user,mqtt_pass)
+    mqttc = mqttConnect(mqtt_user,mqtt_pass,mqtt_server,mqtt_port)
 
 
     # Setup Gpio
-    GPIO.setwarnings(False)
+    #GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(input_pin, GPIO.IN,  pull_up_down=GPIO.PUD_DOWN)         # Output from Doorbell
+    GPIO.setup(input_pin, GPIO.IN)          # Output from Doorbell
+    GPIO.setup(output_pin,GPIO.OUT)         # Open door relay
 
     logger.info("GPI configured in pin: "+str(input_pin))
 
@@ -87,23 +84,8 @@ def main(argv):
     logger.info("Starting service")
     sendmqtt("doorbell mqtt started")
 
-    while True:
-        try:
-            channel=GPIO.wait_for_edge(input_pin, GPIO.FALLING, timeout=5000)
-            if channel is None:
-                count=count+1
-                if count>25:
-                    count=0
-                    sendmqtt("alive")
-                logger.info('Loop')
-            else:
-                logger.info('Fall detected')
-                sendmqtt("on")
-                time.sleep(5)
-                sendmqtt("off")
-        except KeyboardInterrupt:
-            # quit
-            sys.exit()
+    GPIO.add_event_detect(input_pin, GPIO.FALLING, callback=ring_callback)
+    pause()
 
 if __name__ == "__main__":
     main(sys.argv[1:])
