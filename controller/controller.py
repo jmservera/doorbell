@@ -34,6 +34,21 @@ def sendmqtt(mess):
         logger.error(sys.exc_info()[1])
         pass
 
+def on_disconnect(client, userdata, rc):
+    if rc != 0:
+        logger.warning("Unexpected MQTT disconnection. Will auto-reconnect")
+
+def on_connect(client, userdata, flags, rc):
+    if rc==0:
+        logger.info("MQTT connected OK Returned code=" + str(rc))
+        mqttc.subscribe("doorbell/#",1)
+        logger.info("Subscribed to doorbell messages")
+    else:
+        logger.error("MQTT Bad connection Returned code=" + str(rc))
+
+def on_message(client, userdata, message):
+    logger.warning("Message arrived: " + message.topic + " '" + message.payload.decode() + "'")
+
 
 def mqttConnect(mqtt_user,mqtt_pass,mqtt_server,mqtt_port):
     logger.info("MQTT trying connection to "+mqtt_server+":"+str(mqtt_port))
@@ -42,16 +57,39 @@ def mqttConnect(mqtt_user,mqtt_pass,mqtt_server,mqtt_port):
     mqttc.username_pw_set(mqtt_user, mqtt_pass)
 
     mqttc.connect(mqtt_server,mqtt_port)
+    mqttc.on_connect = on_connect
+    mqttc.on_message = on_message
+    mqttc.on_disconnect = on_disconnect
+    mqttc.loop_start()
 
     logger.info("MQTT configured")
 
     return mqttc
 
+ring_running = False
+ring_count = 0
+
 def ring_callback(channel):
-    logger.info('Fall detected')
-    sendmqtt("on")
-    time.sleep(5)
-    sendmqtt("off")
+    global ring_running, ring_count
+
+    ring_count = ring_count + 1 
+    if not ring_running:
+        ring_running = True
+        try:
+            if channel:
+                logger.info('Fall detected')
+                sendmqtt("{ \"on\": "+str(ring_count)+" }")
+                time.sleep(5)
+                sendmqtt("off")
+            else:
+                logger.info("loop")
+        finally:
+            ring_running = False
+    else:
+        logger.info("overlap")
+    logger.info("Ring: "+str(ring_count))
+
+
 
 def main(argv):
 
@@ -75,7 +113,7 @@ def main(argv):
     # Setup Gpio
     #GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(input_pin, GPIO.IN)          # Output from Doorbell
+    GPIO.setup(input_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)          # Output from Doorbell
     GPIO.setup(output_pin,GPIO.OUT)         # Open door relay
 
     logger.info("GPI configured in pin: "+str(input_pin))
@@ -86,6 +124,8 @@ def main(argv):
 
     GPIO.add_event_detect(input_pin, GPIO.FALLING, callback=ring_callback)
     pause()
+
+    mqttc.loop_stop()
 
 if __name__ == "__main__":
     main(sys.argv[1:])
