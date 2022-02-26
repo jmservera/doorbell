@@ -3,8 +3,9 @@ from logger import logger
 import paho.mqtt.client as paho
 
 mqttc = None
+mqtt_callback = None
 
-def sendmqtt(mess):
+def send_message(mess):
     global mqttc
     topic="doorbell/ding"
     try:
@@ -29,10 +30,17 @@ def on_connect(client, userdata, flags, rc):
         logger.error("MQTT Bad connection Returned code=" + str(rc))
 
 def on_message(client, userdata, message):
-    logger.warning("Message arrived: " + message.topic + " '" + message.payload.decode() + "'")
+    
+    logger.info("Message arrived" + message.topic)
+    payload=message.payload.decode()
+    logger.info("Payload: '" + message.payload.decode() + "'")
+    if mqtt_callback!=None:
+        mqtt_callback(message.topic, message.payload.decode())
+    else:
+        logger.warning("Message lost. No message callback registered.")
 
 
-def mqttConnect(mqtt_user,mqtt_pass,mqtt_server,mqtt_port):
+def connect_transport(mqtt_user,mqtt_pass,mqtt_server,mqtt_port):
     global mqttc
     logger.info("MQTT trying connection to "+mqtt_server+":"+str(mqtt_port))
 
@@ -50,6 +58,10 @@ def mqttConnect(mqtt_user,mqtt_pass,mqtt_server,mqtt_port):
 def stop_transport():
     logger.info("Stopping transport")
     mqttc.loop_stop()
+
+def register_callback(callback):
+    global mqtt_callback
+    mqtt_callback=callback
 
 if __name__ == "transport":
     logger.info("Start transport")

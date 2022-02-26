@@ -8,7 +8,7 @@ sudo pip3 install -r requirements.txt
 
 echo install service
 sudo mkdir -p /opt/doorbell
-sudo cp controller.py /opt/doorbell
+sudo cp -r controller /opt/doorbell
 sudo cp config.ini /opt/doorbell
 sudo \cp doorbell-control.service /lib/systemd/system/
 sudo chmod 644 /lib/systemd/system/doorbell-control.service

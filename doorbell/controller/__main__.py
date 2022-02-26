@@ -8,7 +8,7 @@ import RPi.GPIO as GPIO
 from signal import pause
 
 from logger import logger
-from transport import sendmqtt, mqttConnect, stop_transport
+import transport
 
 import configparser
 
@@ -24,9 +24,9 @@ def ring_callback(channel):
         try:
             if channel:
                 logger.info('Fall detected')
-                sendmqtt("{ \"on\": "+str(ring_count)+" }")
+                transport.send_message("{ \"on\": "+str(ring_count)+" }")
                 time.sleep(5)
-                sendmqtt("off")
+                transport.send_message("off")
             else:
                 logger.info("loop")
         finally:
@@ -35,6 +35,8 @@ def ring_callback(channel):
         logger.info("overlap")
     logger.info("Ring: "+str(ring_count))
 
+def message_received(topic, message):
+    logger.info(topic + str(message))
 
 
 def main(argv):
@@ -53,7 +55,8 @@ def main(argv):
 
 
     # Mqtt
-    mqttConnect(mqtt_user,mqtt_pass,mqtt_server,mqtt_port)
+    transport.connect_transport(mqtt_user,mqtt_pass,mqtt_server,mqtt_port)
+    transport.register_callback(message_received)
 
 
     # Setup Gpio
@@ -66,12 +69,19 @@ def main(argv):
 
 
     logger.info("Starting service")
-    sendmqtt("doorbell mqtt started")
+    transport.send_message("doorbell mqtt started")
 
     GPIO.add_event_detect(input_pin, GPIO.FALLING, callback=ring_callback)
+
+    GPIO.output(output_pin, 1)
+    logger.info("pin 1")
+    time.sleep(5)
+    GPIO.output(output_pin, 0)
+    logger.info("pin 0")
+
     pause()
 
-    stop_transport()
+    transport.stop_transport()
 
 if __name__ == "__main__":
     main(sys.argv[1:])

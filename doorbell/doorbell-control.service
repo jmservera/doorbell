@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Restart=always
 WorkingDirectory=/opt/doorbell
-ExecStart=/usr/bin/python3 /opt/doorbell/controller.py
+ExecStart=/usr/bin/python3 /opt/doorbell/controller
 StandardOutput=inherit
 StandardError=inherit
 
