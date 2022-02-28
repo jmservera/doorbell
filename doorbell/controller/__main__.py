@@ -36,12 +36,19 @@ def ring_callback(channel):
     logger.info("Ring: "+str(ring_count))
 
 def message_received(topic, message):
-    logger.info(topic + str(message))
+  logger.info(topic + str(message))
+  if message=="open":
+    logger.info("Opening door")
+    GPIO.output(output_pin,1)
+    time.sleep(0.5)
+    GPIO.output(output_pin,0)
+
+
 
 
 def main(argv):
 
-    global mqttc, mqtt_server, mqtt_port
+    global mqttc, mqtt_server, mqtt_port, output_pin
 
     config = configparser.ConfigParser()
     config.read('config.ini')
@@ -72,12 +79,6 @@ def main(argv):
     transport.send_message("doorbell mqtt started")
 
     GPIO.add_event_detect(input_pin, GPIO.FALLING, callback=ring_callback)
-
-    GPIO.output(output_pin, 1)
-    logger.info("pin 1")
-    time.sleep(5)
-    GPIO.output(output_pin, 0)
-    logger.info("pin 0")
 
     pause()
 

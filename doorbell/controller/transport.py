@@ -30,7 +30,7 @@ def on_connect(client, userdata, flags, rc):
         logger.error("MQTT Bad connection Returned code=" + str(rc))
 
 def on_message(client, userdata, message):
-    
+
     logger.info("Message arrived" + message.topic)
     payload=message.payload.decode()
     logger.info("Payload: '" + message.payload.decode() + "'")
