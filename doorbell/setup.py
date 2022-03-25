@@ -16,5 +16,6 @@ setup(name='doorbell',
         url='https://github.com/jmservera/doorbell',
         test_suite='tests',
         tests_require= open('requirements/test.txt').readlines(),
+        setup_requires=['pytest-runner','flake8'],
         install_requires=requirements
       )
