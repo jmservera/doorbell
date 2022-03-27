@@ -14,7 +14,7 @@ ring_running = False
 ring_count = 0
 
 
-def message_received(topic: str, message):
+def message_received(topic: str, message) -> None:
     logger.info(topic + str(message))
     if message == "open":
         logger.info("Opening door")

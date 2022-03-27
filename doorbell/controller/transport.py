@@ -1,4 +1,5 @@
 import sys
+from typing import Any, Callable
 
 import paho.mqtt.client as paho
 
@@ -70,7 +71,7 @@ def stop_transport():
     mqttc.loop_stop()
 
 
-def register_callback(callback):
+def register_callback(callback: Callable[[str,Any], None]):
     global mqtt_callback
     mqtt_callback = callback
 
