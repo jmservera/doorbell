@@ -11,7 +11,7 @@ def send_message(mess):
 
     topic = "doorbell/ding"
     try:
-        logger.info("Message '"+mess+"' to "+topic)
+        logger.info("Message '" + mess + "' to " + topic)
         mqttc.publish(topic, mess)
     except (ValueError, TypeError):
         logger.error("mqtt error")
@@ -47,7 +47,9 @@ def on_message(client, userdata, message):
 
 def connect_transport(mqtt_user, mqtt_pass, mqtt_server, mqtt_port):
     global mqttc
-    logger.info("MQTT trying connection to "+mqtt_server+":"+str(mqtt_port))
+    logger.info(
+        "MQTT trying connection to " + mqtt_server + ":" + str(mqtt_port)
+    )
 
     mqttc = paho.Client()
     mqttc.username_pw_set(mqtt_user, mqtt_pass)

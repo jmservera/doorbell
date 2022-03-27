@@ -32,8 +32,8 @@ def ring_callback(channel: int) -> None:
         ring_running = True
         try:
             if channel:
-                logger.info('Fall detected')
-                transport.send_message("{ \"on\": "+str(ring_count)+" }")
+                logger.info("Fall detected")
+                transport.send_message('{ "on": ' + str(ring_count) + " }")
                 time.sleep(5)
                 transport.send_message("off")
             else:
@@ -42,7 +42,7 @@ def ring_callback(channel: int) -> None:
             ring_running = False
     else:
         logger.info("overlap")
-    logger.info("Ring: "+str(ring_count))
+    logger.info("Ring: " + str(ring_count))
 
 
 def main(argv):
@@ -50,14 +50,14 @@ def main(argv):
     global mqttc, mqtt_server, mqtt_port
 
     config = configparser.ConfigParser()
-    config.read('config.ini')
+    config.read("config.ini")
 
     init_pi(config, ring_callback)
 
-    mqtt_user = config['DEFAULT']['mqtt_user']
-    mqtt_pass = config['DEFAULT']['mqtt_pass']
-    mqtt_server = config['DEFAULT']['mqtt_server']
-    mqtt_port = int(config['DEFAULT']['mqtt_port'])
+    mqtt_user = config["DEFAULT"]["mqtt_user"]
+    mqtt_pass = config["DEFAULT"]["mqtt_pass"]
+    mqtt_server = config["DEFAULT"]["mqtt_server"]
+    mqtt_port = int(config["DEFAULT"]["mqtt_port"])
 
     # Mqtt
     transport.connect_transport(mqtt_user, mqtt_pass, mqtt_server, mqtt_port)

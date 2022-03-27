@@ -4,6 +4,8 @@ import RPi.GPIO as GPIO
 import time
 from . import logger
 
+output_pin = None
+
 
 def open_door() -> None:
     GPIO.output(output_pin, 1)
@@ -11,12 +13,13 @@ def open_door() -> None:
     GPIO.output(output_pin, 0)
 
 
-def init_pi(config: configparser.ConfigParser,
-            ring_callback: Callable[[int], None]) -> None:
+def init_pi(
+    config: configparser.ConfigParser, ring_callback: Callable[[int], None]
+) -> None:
     global output_pin
 
-    input_pin = int(config['DEFAULT']['input_pin'])
-    output_pin = int(config['DEFAULT']['output_pin'])
+    input_pin = int(config["DEFAULT"]["input_pin"])
+    output_pin = int(config["DEFAULT"]["output_pin"])
 
     # Setup Gpio
     # GPIO.setwarnings(False)
