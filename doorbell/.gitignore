@@ -1,6 +1,0 @@
-config.ini
-build
-.eggs
-*.egg-info
-*.pyc
-__pycache__

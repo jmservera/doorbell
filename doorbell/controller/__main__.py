@@ -3,22 +3,31 @@
 import sys
 
 import time
-import RPi.GPIO as GPIO
 
 from signal import pause
 
-from logger import logger
+from . import logger
 import transport
 
 import configparser
 
+from rpi import init_pi, open_door
+
 ring_running = False
 ring_count = 0
 
-def ring_callback(channel):
+
+def message_received(topic: str, message):
+    logger.info(topic + str(message))
+    if message == "open":
+        logger.info("Opening door")
+        open_door()
+
+
+def ring_callback(channel: int) -> None:
     global ring_running, ring_count
 
-    ring_count = ring_count + 1 
+    ring_count = ring_count + 1
     if not ring_running:
         ring_running = True
         try:
@@ -35,54 +44,32 @@ def ring_callback(channel):
         logger.info("overlap")
     logger.info("Ring: "+str(ring_count))
 
-def message_received(topic, message):
-  logger.info(topic + str(message))
-  if message=="open":
-    logger.info("Opening door")
-    GPIO.output(output_pin,1)
-    time.sleep(0.5)
-    GPIO.output(output_pin,0)
-
-
-
 
 def main(argv):
 
-    global mqttc, mqtt_server, mqtt_port, output_pin
+    global mqttc, mqtt_server, mqtt_port
 
     config = configparser.ConfigParser()
     config.read('config.ini')
 
-    input_pin=int(config['DEFAULT']['input_pin'])
-    output_pin=int(config['DEFAULT']['output_pin'])
-    mqtt_user=config['DEFAULT']['mqtt_user']
-    mqtt_pass=config['DEFAULT']['mqtt_pass']
-    mqtt_server=config['DEFAULT']['mqtt_server']
-    mqtt_port=int(config['DEFAULT']['mqtt_port'])
+    init_pi(config, ring_callback)
 
+    mqtt_user = config['DEFAULT']['mqtt_user']
+    mqtt_pass = config['DEFAULT']['mqtt_pass']
+    mqtt_server = config['DEFAULT']['mqtt_server']
+    mqtt_port = int(config['DEFAULT']['mqtt_port'])
 
     # Mqtt
-    transport.connect_transport(mqtt_user,mqtt_pass,mqtt_server,mqtt_port)
+    transport.connect_transport(mqtt_user, mqtt_pass, mqtt_server, mqtt_port)
     transport.register_callback(message_received)
-
-
-    # Setup Gpio
-    #GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(input_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)          # Output from Doorbell
-    GPIO.setup(output_pin,GPIO.OUT)         # Open door relay
-
-    logger.info("GPI configured in pin: " + str(input_pin))
-
 
     logger.info("Starting service")
     transport.send_message("doorbell mqtt started")
 
-    GPIO.add_event_detect(input_pin, GPIO.FALLING, callback=ring_callback)
-
     pause()
 
     transport.stop_transport()
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
