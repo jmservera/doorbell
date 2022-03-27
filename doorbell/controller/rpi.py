@@ -1,7 +1,9 @@
 import configparser
-from typing import Callable
-import RPi.GPIO as GPIO
 import time
+from typing import Callable
+
+import RPi.GPIO as GPIO
+
 from . import logger
 
 output_pin = None

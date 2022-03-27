@@ -1,6 +1,8 @@
 import sys
-from . import logger
+
 import paho.mqtt.client as paho
+
+from . import logger
 
 mqttc = None
 mqtt_callback = None

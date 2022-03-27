@@ -1,17 +1,14 @@
 #!/usr/bin/python3
 # Uses edge detection to limit the rate of Mqtt-messages
+import configparser
 import sys
-
 import time
-
 from signal import pause
 
-from . import logger
 import transport
-
-import configparser
-
 from rpi import init_pi, open_door
+
+from . import logger
 
 ring_running = False
 ring_count = 0
