@@ -71,7 +71,7 @@ def stop_transport():
     mqttc.loop_stop()
 
 
-def register_callback(callback: Callable[[str,Any], None]):
+def register_callback(callback: Callable[[str, Any], None]):
     global mqtt_callback
     mqtt_callback = callback
 
