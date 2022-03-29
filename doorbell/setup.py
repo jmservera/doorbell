@@ -1,10 +1,11 @@
 #!/usr/bin/python3
-""" example: https://github.com/python-beaver/python-beaver/blob/master/setup.py """
-
-import io, os
+import io
+import os
 from controller import __version__
+from setuptools import setup
 
-from setuptools import find_packages, setup
+""" from an example found in """
+""" https://github.com/python-beaver/python-beaver/blob/master/setup.py """
 
 
 def read(*paths, **kwargs):
@@ -35,19 +36,19 @@ def read_requirements(path):
 requirements = read_requirements('requirements/base.txt')
 
 setup(name='doorbell',
-        version=__version__,
-        description='A controller for the Golmar doorbell hack',
-        long_description = read("../README.md"),
-        long_description_content_type = "text/markdown",
-        author='Juan Manuel Servera',
-        author_email='juan@email',
-        license='LICENSE',
-        packages=['controller'],
-        url='https://github.com/jmservera/doorbell',
-        test_suite='tests',
-        extras_require = {
+      version=__version__,
+      description='A controller for the Golmar doorbell hack',
+      long_description=read("../README.md"),
+      long_description_content_type="text/markdown",
+      author='Juan Manuel Servera',
+      author_email='juan@email',
+      license='LICENSE',
+      packages=['controller'],
+      url='https://github.com/jmservera/doorbell',
+      test_suite='tests',
+      extras_require={
         "test": read_requirements('requirements/test.txt')
-        },
-        setup_requires=['pytest-runner','flake8'],
-        install_requires=requirements
+      },
+      setup_requires=['pytest-runner', 'flake8'],
+      install_requires=requirements
       )

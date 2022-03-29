@@ -27,6 +27,10 @@ def on_disconnect(client, userdata, rc):
         logger.warning("Unexpected MQTT disconnection. Will auto-reconnect")
 
 
+def on_fail(client, userdata) -> None:
+    logger.warning("MQTT connection failed")
+
+
 def on_connect(client, userdata, flags, rc):
     global mqttc
     if rc == 0:
@@ -61,6 +65,7 @@ def connect_transport(mqtt_user, mqtt_pass, mqtt_server, mqtt_port):
     mqttc.on_connect = on_connect
     mqttc.on_message = on_message
     mqttc.on_disconnect = on_disconnect
+    mqttc.connect_fail_callback = on_fail
     mqttc.loop_start()
 
     logger.info("MQTT configured")

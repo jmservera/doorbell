@@ -6,10 +6,11 @@ import time
 from signal import pause
 
 import transport
-from rpi import init_pi, open_door
 
 from . import logger
+from .raspberry_pi import rpi
 
+_rpi: rpi
 ring_running = False
 ring_count = 0
 
@@ -18,7 +19,7 @@ def message_received(topic: str, message) -> None:
     logger.info(topic + str(message))
     if message == "open":
         logger.info("Opening door")
-        open_door()
+        _rpi.open_door()
 
 
 def ring_callback(channel: int) -> None:
@@ -44,12 +45,12 @@ def ring_callback(channel: int) -> None:
 
 def main(argv):
 
-    global mqttc, mqtt_server, mqtt_port
+    global _rpi, mqttc, mqtt_server, mqtt_port
 
     config = configparser.ConfigParser()
     config.read("config.ini")
 
-    init_pi(config, ring_callback)
+    _rpi = rpi(config, ring_callback)
 
     mqtt_user = config["DEFAULT"]["mqtt_user"]
     mqtt_pass = config["DEFAULT"]["mqtt_pass"]
