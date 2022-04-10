@@ -5,14 +5,14 @@ import sys
 import time
 from signal import pause
 
-import transport
-
 from . import logger
 from .raspberry_pi import rpi
+from .transport import transport
 
 _rpi: rpi
 ring_running = False
 ring_count = 0
+messages = transport()
 
 
 def message_received(topic: str, message) -> None:
@@ -31,9 +31,9 @@ def ring_callback(channel: int) -> None:
         try:
             if channel:
                 logger.info("Fall detected")
-                transport.send_message('{ "on": ' + str(ring_count) + " }")
+                messages.send_message('{ "on": ' + str(ring_count) + " }")
                 time.sleep(5)
-                transport.send_message("off")
+                messages.send_message("off")
             else:
                 logger.info("loop")
         finally:
@@ -58,15 +58,15 @@ def main(argv):
     mqtt_port = int(config["DEFAULT"]["mqtt_port"])
 
     # Mqtt
-    transport.connect_transport(mqtt_user, mqtt_pass, mqtt_server, mqtt_port)
-    transport.register_callback(message_received)
+    messages.connect_transport(mqtt_user, mqtt_pass, mqtt_server, mqtt_port)
+    messages.on_message = message_received
 
     logger.info("Starting service")
-    transport.send_message("doorbell mqtt started")
+    messages.send_message("doorbell mqtt started")
 
     pause()
 
-    transport.stop_transport()
+    messages.stop_transport()
 
 
 if __name__ == "__main__":

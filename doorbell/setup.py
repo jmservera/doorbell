@@ -49,6 +49,6 @@ setup(name='doorbell',
       extras_require={
         "test": read_requirements('requirements/test.txt')
       },
-      setup_requires=['pytest-runner', 'flake8'],
+      setup_requires=['pytest-runner', 'flake8', 'isort'],
       install_requires=requirements
       )
