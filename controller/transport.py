@@ -8,6 +8,7 @@ from . import logger
 
 class transport(object):
     """The MQTT transport class"""
+
     _mqttc = paho.Client()
     _mqtt_callback: Callable[[str, Any], None]
 
