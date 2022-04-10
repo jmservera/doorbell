@@ -1,0 +1,17 @@
+site_name: doorbell
+#theme: readthedocs
+
+# mkdocs.yml
+theme:
+  name: "material"
+
+nav:
+    - Home: index.md
+#    - Installation: installation.md
+    - Code Reference:
+        - Doorbell: doorbell-reference.md
+        - Transport: transport-reference.md
+
+plugins:
+  - search
+  - mkdocstrings

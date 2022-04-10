@@ -1,7 +1,4 @@
 {
-    "python.testing.pytestArgs": [
-        "doorbell"
-    ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "python.linting.flake8Enabled": true,

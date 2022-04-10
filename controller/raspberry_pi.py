@@ -2,7 +2,7 @@ import configparser
 import time
 from typing import Callable
 
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO  # type: ignore
 
 from . import interfaces, logger
 

@@ -7,14 +7,15 @@ from . import logger
 
 
 class transport(object):
+    """The MQTT transport class"""
     _mqttc = paho.Client()
-    _mqtt_callback: Callable[[str, Any], None] = None
+    _mqtt_callback: Callable[[str, Any], None]
 
     def __init__(self):
         pass
 
     def send_message(self, mess: str):
-
+        """Send a message to the MQTT broker"""
         topic = "doorbell/ding"
         try:
             logger.info("Message '" + mess + "' to " + topic)
@@ -24,7 +25,7 @@ class transport(object):
             logger.error(sys.exc_info()[1])
             pass
 
-    def _on_disconnect(client, userdata, rc):
+    def _on_disconnect(self, client, userdata, rc):
         if rc != 0:
             logger.warning(
                 "Unexpected MQTT disconnection. Will auto-reconnect"
@@ -54,6 +55,7 @@ class transport(object):
     def connect_transport(
         self, mqtt_user: str, mqtt_pass: str, mqtt_server: str, mqtt_port: int
     ):
+        """Connect to the MQTT broker"""
         logger.info(
             "MQTT trying connection to " + mqtt_server + ":" + str(mqtt_port)
         )
@@ -68,11 +70,13 @@ class transport(object):
         logger.info("MQTT configured")
 
     def stop_transport(self):
+        """Stop the MQTT transport"""
         logger.info("Stopping transport")
         self._mqttc.loop_stop()
 
     @property
     def on_message(self):
+        """Get or set the callback function for MQTT messages"""
         return self._mqtt_callback
 
     @on_message.setter

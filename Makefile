@@ -23,6 +23,7 @@ install:          ## Install the project in dev mode.
 	@if [ "$(USING_POETRY)" ]; then poetry install && exit; fi
 	@echo "Don't forget to run 'make virtualenv' if you got errors."
 	$(ENV_PREFIX)pip install -e .[test]
+	$(ENV_PREFIX)pip install -e .[dev]
 
 .PHONY: fmt
 fmt:              ## Format code using black & isort.
@@ -35,7 +36,7 @@ lint:             ## Run pep8, black, mypy linters.
 	$(ENV_PREFIX)flake8 controller/
 	$(ENV_PREFIX)black -l 79 --check controller/
 	$(ENV_PREFIX)black -l 79 --check tests/
-	$(ENV_PREFIX)mypy --ignore-missing-imports controller/
+	$(ENV_PREFIX)pyright controller/
 
 .PHONY: test
 test: lint        ## Run tests and generate coverage report.

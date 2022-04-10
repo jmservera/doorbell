@@ -2,6 +2,7 @@ from . import interfaces, logger
 
 
 class doorbell(object):
+    """This is the main doorbell class"""
     _rpi: interfaces.rpi_interface
     _last_ring = None
     _ring_count = 0

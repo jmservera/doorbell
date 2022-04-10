@@ -1,0 +1,3 @@
+# Doorbell module
+
+::: controller.doorbell

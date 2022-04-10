@@ -38,7 +38,7 @@ requirements = read_requirements('requirements/base.txt')
 setup(name='doorbell',
       version=__version__,
       description='A controller for the Golmar doorbell hack',
-      long_description=read("../README.md"),
+      long_description=read("README.md"),
       long_description_content_type="text/markdown",
       author='Juan Manuel Servera',
       author_email='juan@email',
@@ -47,8 +47,9 @@ setup(name='doorbell',
       url='https://github.com/jmservera/doorbell',
       test_suite='tests',
       extras_require={
-        "test": read_requirements('requirements/test.txt')
+        "test": read_requirements('requirements/test.txt'),
+        'dev': read_requirements('requirements/dev.txt')
       },
-      setup_requires=['pytest-runner', 'flake8', 'isort'],
+      setup_requires=['pytest-runner'],
       install_requires=requirements
       )
