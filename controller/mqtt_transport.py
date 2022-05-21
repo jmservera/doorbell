@@ -1,21 +1,19 @@
 import sys
-from typing import Any, Callable
 
 import paho.mqtt.client as paho
 
-from . import logger
+from . import interfaces, logger
 
 
-class transport(object):
+class mqtt_transport(interfaces.transport_interface):
     """The MQTT transport class"""
 
     _mqttc = paho.Client()
-    _mqtt_callback: Callable[[str, Any], None]
 
     def __init__(self):
         pass
 
-    def send_message(self, mess: str):
+    def send_message(self, mess: str) -> None:
         """Send a message to the MQTT broker"""
         topic = "doorbell/ding"
         try:
@@ -48,8 +46,8 @@ class transport(object):
         logger.info("Message arrived" + message.topic)
         payload = message.payload.decode()
         logger.info("Payload: '" + payload + "'")
-        if self._mqtt_callback is not None:
-            self._mqtt_callback(message.topic, payload)
+        if self._message_callback is not None:
+            self._message_callback(message.topic, payload)
         else:
             logger.warning("Message lost. No message callback registered.")
 
@@ -74,12 +72,3 @@ class transport(object):
         """Stop the MQTT transport"""
         logger.info("Stopping transport")
         self._mqttc.loop_stop()
-
-    @property
-    def on_message(self):
-        """Get or set the callback function for MQTT messages"""
-        return self._mqtt_callback
-
-    @on_message.setter
-    def on_message(self, callback: Callable[[str, Any], None]):
-        self._mqtt_callback = callback

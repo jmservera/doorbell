@@ -7,13 +7,13 @@ import time
 from signal import pause
 
 from . import logger
+from .mqtt_transport import mqtt_transport
 from .raspberry_pi import rpi
-from .transport import transport
 
 _rpi: rpi
 ring_running = False
 ring_count = 0
-messages = transport()
+messages = mqtt_transport()
 
 
 def message_received(topic: str, message) -> None:

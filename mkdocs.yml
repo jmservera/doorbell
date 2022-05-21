@@ -10,7 +10,11 @@ nav:
 #    - Installation: installation.md
     - Code Reference:
         - Doorbell: doorbell-reference.md
-        - Transport: transport-reference.md
+        - Interfaces: interfaces-reference.md
+        - MQTT-Transport: mqtt_transport-reference.md
+        - Rpi: rpi_interface-reference.md
+        - Transport: transport_interface-reference.md
+
 
 plugins:
   - search
