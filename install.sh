@@ -6,6 +6,9 @@ sudo systemctl stop doorbell-control.service
 echo install requirements
 sudo pip3 install -r requirements.txt
 
+echo install needed libs
+sudo apt-get install libavahi-compat-libdnssd-dev
+
 echo install service
 sudo mkdir -p /opt/doorbell
 sudo cp -r controller /opt/doorbell
