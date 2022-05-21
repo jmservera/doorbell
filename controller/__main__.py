@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # Uses edge detection to limit the rate of Mqtt-messages
+# TODO: implement homekit https://github.com/ikalchev/HAP-python
 import configparser
 import sys
 import time
