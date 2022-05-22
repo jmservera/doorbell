@@ -87,6 +87,7 @@ def main(argv):
 
     send_message("doorbell mqtt started")
 
+    #    input()
     pause()
 
     for messager in messagers:
