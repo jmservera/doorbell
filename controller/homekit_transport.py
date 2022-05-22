@@ -21,7 +21,9 @@ class RingSensor(Accessory):
         # Add the services that this Accessory will support with
         # add_preload_service here
         ring_service = self.add_preload_service("Doorbell")
-        self.char_detected = ring_service.configure_char("ProgrammableSwitchEvent")
+        self.char_detected = ring_service.configure_char(
+            "ProgrammableSwitchEvent"
+        )
 
     def Ring(self):
         self.char_detected.set_value(True)
@@ -52,11 +54,11 @@ class homekit_transport(interfaces.transport_interface):
 
     def _get_bridge(self):
         """Call this method to get a Bridge."""
-        self._bridge = Bridge(self._driver, display_name="Bridge")
+        self._bridge = Bridge(self._driver, display_name=self._name + "Bridge")
 
-        id = uuid.getnode()
-        self._ring = RingSensor(self._driver,
-            display_name=self._name + "RingSensor")
+        self._ring = RingSensor(
+            self._driver, display_name=self._name + "RingSensor"
+        )
         self._bridge.add_accessory(self._ring)
 
         return self._bridge
@@ -69,7 +71,7 @@ class homekit_transport(interfaces.transport_interface):
         # We want KeyboardInterrupts and SIGTERM (kill) to be handled by the
         # driver itself, so that it can gracefully stop the accessory, server
         # and advertising.
-        signal.signal(signal.SIGINT, self._driver.signal_handler)
+        # signal.signal(signal.SIGINT, self._driver.signal_handler)
         signal.signal(signal.SIGTERM, self._driver.signal_handler)
         # Start it!
         self._driver.start()
