@@ -136,3 +136,4 @@ dmypy.json
 .vscode
 
 config.ini
+*.state

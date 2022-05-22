@@ -1,6 +1,5 @@
 import signal
 import sys
-import uuid
 
 from pyhap.accessory import Accessory, Bridge
 from pyhap.accessory_driver import AccessoryDriver
@@ -54,10 +53,12 @@ class homekit_transport(interfaces.transport_interface):
 
     def _get_bridge(self):
         """Call this method to get a Bridge."""
-        self._bridge = Bridge(self._driver, display_name=self._name + "Bridge")
+        self._bridge = Bridge(
+            self._driver, display_name=self._name + " Bridge"
+        )
 
         self._ring = RingSensor(
-            self._driver, display_name=self._name + "RingSensor"
+            self._driver, display_name=self._name + " Ring Sensor"
         )
         self._bridge.add_accessory(self._ring)
 

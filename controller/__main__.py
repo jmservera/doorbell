@@ -9,11 +9,11 @@ from typing import List
 
 from . import logger
 from .homekit_transport import homekit_transport
-from .interfaces import transport_interface
+from .interfaces import rpi_interface, transport_interface
 from .mqtt_transport import mqtt_transport
-from .raspberry_pi import rpi
+from .pi_loader import load_pi
 
-_rpi: rpi
+_rpi: rpi_interface
 ring_running = False
 ring_count = 0
 
@@ -59,9 +59,10 @@ def main(argv):
     config = configparser.ConfigParser()
     config.read("config.ini")
 
-    _rpi = rpi(config, ring_callback)
+    _rpi = load_pi(config, ring_callback)
 
-    if bool(config["DEFAULT"]["use_mqtt"]):
+    logger.warning(config.getboolean("DEFAULT", "use_mqtt"))
+    if config.getboolean("DEFAULT", "use_mqtt"):
         mqtt_user = config["MQTT"]["mqtt_user"]
         mqtt_pass = config["MQTT"]["mqtt_pass"]
         mqtt_server = config["MQTT"]["mqtt_server"]
@@ -75,7 +76,7 @@ def main(argv):
 
         messagers.append(mqtt)
 
-    if bool(config["DEFAULT"]["use_homekit"]):
+    if config.getboolean("DEFAULT", "use_homekit"):
         # Homekit
         homekit = homekit_transport(config["HOMEKIT"]["name"])
         homekit.connect_transport()

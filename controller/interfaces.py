@@ -40,3 +40,8 @@ class transport_interface(ABC):
     def send_message(self, mess: str) -> None:
         """Send a message to the client"""
         pass
+
+    @abstractmethod
+    def stop_transport(self) -> None:
+        """Stop the transport"""
+        pass
