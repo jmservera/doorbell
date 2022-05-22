@@ -11,10 +11,11 @@ class rpi(interfaces.rpi_interface):
 
     _output_pin = None
 
-    def open_door(self) -> None:
+    def open_door(self) -> bool:
         GPIO.output(self._output_pin, 1)
         time.sleep(0.5)
         GPIO.output(self._output_pin, 0)
+        return True
 
     def __init__(
         self,

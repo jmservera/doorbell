@@ -12,9 +12,8 @@ class doorbell(object):
         self._rpi = rpi
         pass
 
-    def Open(self) -> None:
-        self._rpi.open_door()
-        pass
+    def Open(self) -> bool:
+        return self._rpi.open_door()
 
 
 if __name__ == "doorbell":

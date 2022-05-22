@@ -1,9 +1,11 @@
-from .mocks import mock_pi
+from controller.interfaces import rpi_interface
 
 # import source.module as mod
 # import tests.helpers as hlp
 import controller
 import controller.doorbell
+
+from unittest.mock import MagicMock
 
 
 def test_module_func():
@@ -15,7 +17,7 @@ def test_controller():
 
 
 def test_doorbell_open():
-    _pi = mock_pi(None, None)
+    _pi = MagicMock(spec=rpi_interface)
+    _pi.open_door = MagicMock(return_value=True)
     door = controller.doorbell.doorbell(_pi)
-    door.Open()
-    assert _pi.openCalled
+    assert door.Open()

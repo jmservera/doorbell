@@ -6,7 +6,7 @@ from typing import Any, Callable
 class rpi_interface(ABC):
     """The Raspberry Pi interface"""
     @abstractmethod
-    def open_door(self) -> None:
+    def open_door(self) -> bool:
         """Activates the open door mecanism"""
         pass
 
