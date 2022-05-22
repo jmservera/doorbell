@@ -56,7 +56,7 @@ class homekit_transport(interfaces.transport_interface):
 
         id = uuid.getnode()
         self._ring = RingSensor(
-            display_name=self._name + "RingSensor", aid=1 + id * 10
+            display_name=self._name + "RingSensor", id=1 + id * 10
         )
         self._bridge.add_accessory(self._ring)
 
