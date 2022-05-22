@@ -5,15 +5,24 @@ import configparser
 import sys
 import time
 from signal import pause
+from typing import List
 
 from . import logger
+from .homekit_transport import homekit_transport
+from .interfaces import transport_interface
 from .mqtt_transport import mqtt_transport
 from .raspberry_pi import rpi
 
 _rpi: rpi
 ring_running = False
 ring_count = 0
-messages = mqtt_transport()
+
+messagers: List[transport_interface] = []
+
+
+def send_message(msg: str) -> None:
+    for messager in messagers:
+        messager.send_message(msg)
 
 
 def message_received(topic: str, message) -> None:
@@ -32,9 +41,9 @@ def ring_callback(channel: int) -> None:
         try:
             if channel:
                 logger.info("Fall detected")
-                messages.send_message('{ "on": ' + str(ring_count) + " }")
+                send_message('{ "on": ' + str(ring_count) + " }")
                 time.sleep(5)
-                messages.send_message("off")
+                send_message("off")
             else:
                 logger.info("loop")
         finally:
@@ -45,7 +54,6 @@ def ring_callback(channel: int) -> None:
 
 
 def main(argv):
-
     global _rpi, mqttc, mqtt_server, mqtt_port
 
     config = configparser.ConfigParser()
@@ -53,21 +61,33 @@ def main(argv):
 
     _rpi = rpi(config, ring_callback)
 
-    mqtt_user = config["DEFAULT"]["mqtt_user"]
-    mqtt_pass = config["DEFAULT"]["mqtt_pass"]
-    mqtt_server = config["DEFAULT"]["mqtt_server"]
-    mqtt_port = int(config["DEFAULT"]["mqtt_port"])
+    if bool(config["DEFAULT"]["use_mqtt"]):
+        mqtt_user = config["MQTT"]["mqtt_user"]
+        mqtt_pass = config["MQTT"]["mqtt_pass"]
+        mqtt_server = config["MQTT"]["mqtt_server"]
+        mqtt_port = int(config["MQTT"]["mqtt_port"])
 
-    # Mqtt
-    messages.connect_transport(mqtt_user, mqtt_pass, mqtt_server, mqtt_port)
-    messages.on_message = message_received
+        # Mqtt
+        mqtt = mqtt_transport()
+        messagers.append(mqtt)
+
+        mqtt.connect_transport(mqtt_user, mqtt_pass, mqtt_server, mqtt_port)
+        mqtt.on_message = message_received
+
+    if bool(config["DEFAULT"]["use_homekit"]):
+        # Homekit
+        homekit = homekit_transport(config["HOMEKIT"]["name"])
+        messagers.append(homekit)
+        pass
 
     logger.info("Starting service")
-    messages.send_message("doorbell mqtt started")
+
+    send_message("doorbell mqtt started")
 
     pause()
 
-    messages.stop_transport()
+    for messager in messagers:
+        messager.stop_transport()
 
 
 if __name__ == "__main__":
