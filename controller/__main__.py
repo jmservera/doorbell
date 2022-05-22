@@ -69,16 +69,18 @@ def main(argv):
 
         # Mqtt
         mqtt = mqtt_transport()
-        messagers.append(mqtt)
 
         mqtt.connect_transport(mqtt_user, mqtt_pass, mqtt_server, mqtt_port)
         mqtt.on_message = message_received
 
+        messagers.append(mqtt)
+
     if bool(config["DEFAULT"]["use_homekit"]):
         # Homekit
         homekit = homekit_transport(config["HOMEKIT"]["name"])
+        homekit.connect_transport()
+
         messagers.append(homekit)
-        pass
 
     logger.info("Starting service")
 
