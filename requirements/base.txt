@@ -1,0 +1,2 @@
+paho-mqtt==1.6.1
+HAP-python[QRCode]==4.4.0

@@ -7,7 +7,7 @@ A raspi hack for the golmar video doorbell.
 Work In Progress
 ---
 
-These are some hacks for the [Golmar Tekna Plus SE][teknaplusse] video-doorbell that allow you to stream the video to HomeAssistant via rtsp and interact with the door when someone rings the bell.
+These are some hacks for the [Golmar Tekna Plus SE][teknaplus] video-doorbell (it usually comes [in a kit][teknakit]) that allow you to stream the video to HomeAssistant via rtsp and interact with the door when someone rings the bell.
 
 The Video Stream folder contains a script to capture the video using an EasyCap dongle connected to a Rpi2 and the controller will get the doorbell signal and notify the HomeAssistant via mqtt.
 
@@ -54,4 +54,5 @@ TO-DO
 
 
 
-[teknaplusse]: https://www.golmar.es/productos/monitor-color-con-pantalla-de-3,5-tekna-plus-se
+[teknaplus]: https://www.golmar.es/products/tekna-s-plus
+[teknakit]: https://www.golmar.es/products/sv-801-s#product
