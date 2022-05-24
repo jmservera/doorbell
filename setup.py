@@ -51,5 +51,6 @@ setup(name='doorbell',
         'dev': read_requirements('requirements/dev.txt')
       },
       setup_requires=['pytest-runner'],
+      python_requires=">=3.6",
       install_requires=requirements
       )

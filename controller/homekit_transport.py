@@ -23,11 +23,15 @@ class RingSensor(Accessory):
         # add_preload_service here
         ring_service = self.add_preload_service("Doorbell")
         self.char_detected = ring_service.configure_char(
-            "ProgrammableSwitchEvent"
+            "ProgrammableSwitchEvent", setter_callback=self._ring
         )
+        self.setter_callback = self._ring
 
     def Ring(self):
         self.char_detected.set_value(True)
+
+    def _ring(self, value):
+        logger.info("Ring")
 
 
 class homekit_transport(interfaces.transport_interface):
@@ -56,15 +60,22 @@ class homekit_transport(interfaces.transport_interface):
             logger.error(sys.exc_info()[1])
             pass
 
+    def _button_pressed(self, value):
+        """Send a message to the Homekit broker"""
+        logger.info("Bridge button pressed")
+        self._ring_sensor.Ring()
+
     def _get_bridge(self):
         """Call this method to get a Bridge."""
         self._bridge = Bridge(
             self._driver, display_name=self._name + " Bridge"
         )
+        self._bridge.setter_callback = self._button_pressed
 
         self._ring_sensor = RingSensor(
             self._driver, display_name=self._name + " Ring Sensor"
         )
+
         self._bridge.add_accessory(self._ring_sensor)
 
         return self._bridge
@@ -80,6 +91,7 @@ class homekit_transport(interfaces.transport_interface):
         signal.signal(signal.SIGINT, self._driver.signal_handler)
         signal.signal(signal.SIGTERM, self._driver.signal_handler)
         # Start it!
+        # self._driver.start()
         self._background_thread = Thread(target=self._driver.start)
         self._background_thread.start()
 

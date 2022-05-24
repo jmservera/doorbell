@@ -1,6 +1,14 @@
+SHELL := /bin/bash
+
 .ONESHELL:
 ENV_PREFIX=$(shell python -c "if __import__('pathlib').Path('.venv/bin/pip').exists(): print('.venv/bin/')")
 USING_POETRY=$(shell grep "tool.poetry" pyproject.toml && echo "yes")
+
+.PHONY: run
+run: logLevel:=INFO 
+
+run:
+	@python -m controller -l $(logLevel)
 
 .PHONY: help
 help:             ## Show the help.
@@ -72,7 +80,7 @@ virtualenv:       ## Create a virtual environment.
 	@rm -rf .venv
 	@python3 -m venv .venv
 	@./.venv/bin/pip install -U pip
-	@./.venv/bin/pip install -e .[test]
+	@./.venv/bin/pip install -e .[test] -e .[dev]
 	@echo
 	@echo "!!! Please run 'source .venv/bin/activate' to enable the environment !!!"
 

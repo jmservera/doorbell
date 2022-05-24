@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 # Uses edge detection to limit the rate of Mqtt-messages
 # TODO: implement homekit https://github.com/ikalchev/HAP-python
+import argparse
 import configparser
+import logging
 import sys
 import time
 from signal import pause
@@ -61,7 +63,7 @@ def main(argv):
 
     _rpi = load_pi(config, ring_callback)
 
-    logger.warning(config.getboolean("DEFAULT", "use_mqtt"))
+    logger.debug(config.getboolean("DEFAULT", "use_mqtt"))
     if config.getboolean("DEFAULT", "use_mqtt"):
         mqtt_user = config["MQTT"]["mqtt_user"]
         mqtt_pass = config["MQTT"]["mqtt_pass"]
@@ -95,4 +97,25 @@ def main(argv):
 
 
 if __name__ == "__main__":
+
+    # Initialize parser
+    _parser = argparse.ArgumentParser()
+
+    # Adding optional argument
+    _parser.add_argument(
+        "-l",
+        "--LogLevel",
+        help="Log level (CRITICAL,FATAL,ERROR,\
+                        WARNING,INFO,DEBUG,NOTSET",
+        type=str,
+    )
+
+    # Read arguments from command line
+    _args = _parser.parse_args()
+
+    if _args.LogLevel:
+        level = logging._nameToLevel[str(_args.LogLevel).upper()]
+        if level:
+            logger.setLevel(level)
+
     main(sys.argv[1:])
