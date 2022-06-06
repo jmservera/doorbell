@@ -1,11 +1,9 @@
 import configparser
-from typing import Callable
 
 from . import interfaces, logger
 
 
 class rpi(interfaces.rpi_interface):
-    _ring_callback: Callable[[int], None]
 
     def open_door(self) -> bool:
         logger.info("Opening door")
@@ -13,10 +11,9 @@ class rpi(interfaces.rpi_interface):
 
     def __init__(
         self,
-        config: configparser.ConfigParser,
-        ring_callback: Callable[[int], None],
+        config: configparser.ConfigParser
     ) -> None:
-        self._ring_callback = ring_callback
+        super().__init__(config)
 
-    def ring_callback(self, channel: int) -> None:
-        self._ring_callback(channel)
+    def ring_callback(self) -> None:
+        self._event("ring")

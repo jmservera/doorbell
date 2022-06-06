@@ -1,11 +1,14 @@
 import signal
 import sys
+import time
 from asyncio import AbstractEventLoop, new_event_loop
 from threading import Thread
 
 from pyhap.accessory import Accessory, Bridge
 from pyhap.accessory_driver import AccessoryDriver
+from pyhap.characteristic import Characteristic
 from pyhap.const import CATEGORY_DOOR
+from pyhap.service import Service
 
 from . import interfaces, logger
 
@@ -14,6 +17,8 @@ class RingSensor(Accessory):
     """Implementation of the Doorbell Ring Sensor"""
 
     category = CATEGORY_DOOR
+    _ring_service: Service
+    _switch: Characteristic
 
     def __init__(self, *args, **kwargs):
 
@@ -21,17 +26,20 @@ class RingSensor(Accessory):
 
         # Add the services that this Accessory will support with
         # add_preload_service here
-        ring_service = self.add_preload_service("Doorbell")
-        self.char_detected = ring_service.configure_char(
-            "ProgrammableSwitchEvent", setter_callback=self._ring
+        self._ring_service = self.add_preload_service("Doorbell")
+        self._switch = self._ring_service.get_characteristic(
+            "ProgrammableSwitchEvent"
         )
-        self.setter_callback = self._ring
+
+        self._switch.setter_callback = self._ring
 
     def Ring(self):
-        self.char_detected.set_value(True)
+        self._switch.client_update_value(0)
+        time.sleep(2)
+        self._switch.client_update_value(None)
 
     def _ring(self, value):
-        logger.info("Ring")
+        logger.info("Ring: " + str(value))
 
 
 class homekit_transport(interfaces.transport_interface):
@@ -43,18 +51,27 @@ class homekit_transport(interfaces.transport_interface):
     _name: str
     _loop: AbstractEventLoop
     _background_thread: Thread
+    _rpi: interfaces.rpi_interface
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, rpi: interfaces.rpi_interface):
+        """Initialise the transport with a name"""
+        super().__init__()
         self._name = name
         self._loop = new_event_loop()
+        self._rpi = rpi
         pass
 
     def send_message(self, mess: str) -> None:
         """Send a message to the Homekit broker"""
         topic = "doorbell/ding"
         try:
-            logger.info("Message '" + mess + "' to " + topic)
-            self._loop.call_soon_threadsafe(self._ring_sensor.Ring)
+            if mess == "ring":
+                self._loop.call_soon_threadsafe(self._ring_sensor.Ring)
+            elif mess == "open":
+                self._loop.call_soon_threadsafe(self._rpi.open_door)
+            else:
+                logger.info("Message '" + mess + "' to " + topic)
+
         except (ValueError, TypeError):
             logger.error("mqtt error")
             logger.error(sys.exc_info()[1])

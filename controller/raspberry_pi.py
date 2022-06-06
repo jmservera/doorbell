@@ -1,6 +1,5 @@
 import configparser
 import time
-from typing import Callable
 
 import RPi.GPIO as GPIO  # type: ignore
 
@@ -17,11 +16,15 @@ class rpi(interfaces.rpi_interface):
         GPIO.output(self._output_pin, 0)
         return True
 
+    def ring_callback(self, channel):
+        self._event("ring")
+
     def __init__(
         self,
-        config: configparser.ConfigParser,
-        ring_callback: Callable[[int], None],
+        config: configparser.ConfigParser
     ) -> None:
+
+        super().__init__(config)
 
         input_pin = int(config["DEFAULT"]["input_pin"])
         self._output_pin = int(config["DEFAULT"]["output_pin"])
@@ -36,4 +39,5 @@ class rpi(interfaces.rpi_interface):
 
         logger.info("GPI configured in pin: " + str(input_pin))
 
-        GPIO.add_event_detect(input_pin, GPIO.FALLING, callback=ring_callback)
+        GPIO.add_event_detect(input_pin, GPIO.FALLING,
+                              callback=self.ring_callback)

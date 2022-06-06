@@ -80,7 +80,7 @@ def main(argv):
 
     if config.getboolean("DEFAULT", "use_homekit"):
         # Homekit
-        homekit = homekit_transport(config["HOMEKIT"]["name"])
+        homekit = homekit_transport(config["HOMEKIT"]["name"], _rpi)
         homekit.connect_transport()
 
         messagers.append(homekit)
