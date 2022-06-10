@@ -4,18 +4,23 @@ from typing import Any, Callable
 
 
 class Event(object):
+    """Abstract class for the event interface"""
     def __init__(self):
+        """Initialize the event"""
         self.__eventhandlers = []
 
     def __iadd__(self, handler):
+        """Add a handler to the event"""
         self.__eventhandlers.append(handler)
         return self
 
     def __isub__(self, handler):
+        """Remove a handler from the event"""
         self.__eventhandlers.remove(handler)
         return self
 
     def __call__(self, *args, **keywargs):
+        """Call all the event handlers"""
         for eventhandler in self.__eventhandlers:
             eventhandler(*args, **keywargs)
 
