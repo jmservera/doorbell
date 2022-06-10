@@ -19,10 +19,7 @@ class rpi(interfaces.rpi_interface):
     def ring_callback(self, channel):
         self._event("ring")
 
-    def __init__(
-        self,
-        config: configparser.ConfigParser
-    ) -> None:
+    def __init__(self, config: configparser.ConfigParser) -> None:
 
         super().__init__(config)
 
@@ -39,5 +36,6 @@ class rpi(interfaces.rpi_interface):
 
         logger.info("GPI configured in pin: " + str(input_pin))
 
-        GPIO.add_event_detect(input_pin, GPIO.FALLING,
-                              callback=self.ring_callback)
+        GPIO.add_event_detect(
+            input_pin, GPIO.FALLING, callback=self.ring_callback
+        )

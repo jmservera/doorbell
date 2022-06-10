@@ -4,7 +4,6 @@ from typing import Any, Callable
 
 
 class Event(object):
-
     def __init__(self):
         self.__eventhandlers = []
 
@@ -29,10 +28,7 @@ class rpi_interface(ABC):
         """Activates the open door mecanism"""
         pass
 
-    def __init__(
-        self,
-        config: configparser.ConfigParser
-    ) -> None:
+    def __init__(self, config: configparser.ConfigParser) -> None:
         """Initializes the Raspberry Pi interface"""
         self._event = Event()
 
